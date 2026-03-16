@@ -1,0 +1,226 @@
+﻿@{
+    ViewData["Title"] = "Bem-vindo ao Galilei";
+}
+
+<style>
+    .hero-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 50px;
+        min-height: calc(100vh - 80px - 80px); /* vh - header - main-padding */
+        padding: 2rem 0;
+    }
+
+    .hero-text h1 {
+        font-size: 4.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-text h1 .highlight {
+        color: var(--primary-color);
+    }
+
+    .hero-text .subtitle {
+        font-size: 1.25rem;
+        color: var(--light-text);
+        opacity: 0.8;
+        margin-bottom: 2.5rem;
+        max-width: 500px;
+    }
+
+    body.dark-mode .hero-text .subtitle {
+        color: var(--dark-text);
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .hero-btn {
+        padding: 18px 36px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .hero-btn.primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    body.dark-mode .hero-btn.primary {
+        color: var(--dark-bg);
+    }
+
+    .hero-btn.primary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3);
+    }
+
+    .hero-btn.secondary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .hero-btn.secondary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    body.dark-mode .hero-btn.secondary:hover {
+        color: var(--dark-bg);
+    }
+
+    .hero-visual {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    body.dark-mode .hero-visual {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+
+    .chart-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .chart-grid {
+        stroke: var(--light-border);
+        transition: stroke 0.3s;
+    }
+
+    body.dark-mode .chart-grid {
+        stroke: var(--dark-border);
+    }
+
+    .chart-line {
+        stroke: var(--primary-color);
+        stroke-width: 3;
+        fill: none;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw-line 2s 0.5s ease-out forwards;
+    }
+
+    .chart-line-2 {
+        stroke: var(--light-border);
+        stroke-width: 2;
+        fill: none;
+        stroke-dasharray: 500;
+        stroke-dashoffset: 500;
+        animation: draw-line-2 2s 0.8s ease-out forwards;
+    }
+
+    body.dark-mode .chart-line-2 {
+        stroke: var(--dark-border);
+    }
+
+    .chart-area {
+        fill: url(#chart-gradient);
+        opacity: 0.2;
+        animation: fade-in-up 1s 0.5s ease-out forwards;
+    }
+
+    .chart-point {
+        fill: var(--primary-color);
+        stroke: var(--light-card-bg);
+        stroke-width: 3;
+        r: 0;
+        animation: pop-in 0.5s 1.5s ease-out forwards;
+    }
+
+    body.dark-mode .chart-point {
+        stroke: var(--dark-card-bg);
+    }
+
+    @@keyframes draw-line {
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @@keyframes draw-line-2 {
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @@keyframes pop-in {
+        to {
+            r: 5;
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .hero-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .hero-text .subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-actions {
+            justify-content: center;
+        }
+        .hero-visual {
+            margin-top: 3rem;
+            height: 300px;
+        }
+        .hero-text h1 {
+            font-size: 3.5rem;
+        }
+    }
+
+</style>
+
+<div class="hero-container">
+    <div class="hero-text animated fade-in-up" style="animation-delay: 0.2s;">
+        <h1>O Futuro dos seus <span class="highlight">Investimentos</span> começa aqui.</h1>
+        <p class="subtitle">Acesse uma plataforma completa, intuitiva e moderna para gerenciar seus ativos e explorar novas oportunidades no mercado nacional.</p>
+        <div class="hero-actions">
+            <a href="/Account/Register" class="hero-btn primary">Abra sua conta</a>
+            <a href="/Account/Login" class="hero-btn secondary">Fazer Login</a>
+        </div>
+    </div>
+    <div class="hero-visual animated fade-in-up" style="animation-delay: 0.4s;">
+        <svg class="chart-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--primary-color)" />
+                    <stop offset="100%" stop-color="var(--primary-color)" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+            <g class="chart-grid">
+                <line x1="0" y1="50" x2="400" y2="50"></line>
+                <line x1="0" y1="100" x2="400" y2="100"></line>
+                <line x1="0" y1="150" x2="400" y2="150"></line>
+            </g>
+            <path class="chart-line-2" d="M 0,150 C 60,120 90,100 150,130 S 210,180 260,140 S 330,80 400,100" />
+            <path class="chart-area" d="M 0,120 C 50,80 80,150 140,100 S 200,50 250,80 S 320,160 400,130 L 400,200 L 0,200 Z" />
+            <path class="chart-line" d="M 0,120 C 50,80 80,150 140,100 S 200,50 250,80 S 320,160 400,130" />
+            <g class="chart-points">
+                <circle class="chart-point" cx="140" cy="100" style="animation-delay: 1.6s"></circle>
+                <circle class="chart-point" cx="250" cy="80" style="animation-delay: 1.8s"></circle>
+                <circle class="chart-point" cx="400" cy="130" style="animation-delay: 2s"></circle>
+            </g>
+        </svg>
+    </div>
+</div>
