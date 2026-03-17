@@ -1,0 +1,391 @@
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+<style>
+    .auth-container {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 80px);
+        display: flex;
+        overflow: hidden;
+        background-color: var(--light-bg);
+        z-index: 50; 
+    }
+
+    body.dark-mode .auth-container {
+        background-color: var(--dark-bg);
+    }
+
+    .auth-visual {
+        flex: 1.2;
+        background: linear-gradient(135deg, #FF8C00 0%, #FF5F00 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 4rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-floating label::after {
+        display: none !important; 
+    }
+
+    .auth-visual::before {
+        content: '';
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        top: -25%;
+        left: -25%;
+    }
+
+    .auth-content {
+        z-index: 2;
+        text-align: center;
+        max-width: 500px;
+        margin-bottom: 2rem;
+    }
+
+    .auth-visual h2 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.1;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .auth-visual p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .auth-form-side {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        background: transparent;
+        overflow-y: auto; 
+    }
+
+    .form-wrapper {
+         width: 100%;
+         max-width: 520px;
+         background: transparent;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         animation: fade-in-right 0.6s ease-out;
+    }
+
+    @@keyframes fade-in-right {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .auth-subtitle {
+        margin-bottom: 2rem;
+        color: var(--light-text);
+        font-size: 0.95rem;
+        opacity: 0.7;
+    }
+
+    body.dark-mode .auth-subtitle {
+        color: var(--dark-text);
+    }
+
+    .form-header-mobile {
+        display: none;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-header-mobile h2 {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+
+    .form-floating {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .form-floating input {
+        width: 100%;
+        padding: 2rem 0.75rem 0.5rem 0.75rem;
+        font-size: 1rem;
+        background-color: transparent;
+        border: 1px solid transparent; 
+        border-bottom: 2px solid var(--light-border);
+        border-radius: 8px 8px 0 0;
+        color: inherit; 
+        transition: all 0.2s ease;
+        height: 65px;
+    }
+
+    body.dark-mode .form-floating input {
+        background-color: transparent;
+        border-bottom-color: var(--dark-border);
+    }
+
+    .form-floating input:focus {
+        background-color: transparent;
+        border-bottom-color: var(--primary-color);
+        outline: none;
+        box-shadow: none; 
+    }
+
+    body.dark-mode .form-floating input:focus {
+        background-color: transparent;
+    }
+
+    .form-control.is-invalid, .was-validated .form-control:invalid {
+        background-image: none !important;
+    }
+
+    .form-floating label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        padding: 1rem 0.75rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
+        color: #777; 
+        display: flex;
+        align-items: center;
+        background-color: transparent !important;
+    }
+
+    body.dark-mode .form-floating label {
+        color: #aaa;
+    }
+
+    .form-floating input:focus ~ label,
+    .form-floating input:not(:placeholder-shown) ~ label {
+        opacity: .9;
+        transform: scale(.8) translateY(-1.2rem) translateX(0.15rem);
+        height: auto;
+    }
+
+    .form-floating input:focus ~ label {
+        color: var(--primary-color);
+    }
+
+    body.dark-mode .form-floating input:focus ~ label {
+        color: var(--primary-color);
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        color: inherit;
+        opacity: 0.5;
+        transition: all 0.2s;
+    }
+    
+    .password-toggle:hover, .password-toggle.active {
+        opacity: 1;
+        color: var(--primary-color);
+    }
+
+    .form-btn {
+        margin-top: 10px;
+    }
+    
+    .forgot-password {
+        text-align: right;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .forgot-password a {
+        color: var(--light-text);
+        text-decoration: none;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    body.dark-mode .forgot-password a {
+        color: var(--dark-text);
+    }
+
+    .forgot-password a:hover {
+        opacity: 1;
+        color: var(--primary-color);
+    }
+
+    .line-chart-svg {
+        width: 100%;
+        height: 220px;
+        max-width: 450px;
+        overflow: visible;
+        z-index: 2;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    }
+
+    .chart-path {
+        fill: none;
+        stroke: white;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1200;
+        stroke-dashoffset: 1200;
+        animation: draw-line 2.5s ease-out forwards 0.3s;
+    }
+
+    .chart-area-fill {
+        fill: rgba(255, 255, 255, 0.15);
+        opacity: 0;
+        animation: fade-in 1s ease-out forwards 1.8s;
+    }
+
+    .chart-grid-line {
+        stroke: rgba(255, 255, 255, 0.2);
+        stroke-width: 1;
+        stroke-dasharray: 4 4;
+    }
+
+    .chart-dot {
+        fill: white;
+        stroke: rgba(255, 140, 0, 0.8);
+        stroke-width: 2;
+        r: 0;
+        animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @@keyframes draw-line {
+        to { stroke-dashoffset: 0; }
+    }
+
+    @@keyframes fade-in {
+        to { opacity: 1; }
+    }
+
+    @@keyframes pop-in {
+        to { r: 6; }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-visual">
+        <div class="auth-content animated fade-in-up" style="animation-duration: 0.8s;">
+            <h2>Bem-vindo de volta</h2>
+            <p>Continue sua jornada de investimentos com a Galilei.</p>
+        </div>
+
+        <svg class="line-chart-svg" viewBox="0 0 500 250" preserveAspectRatio="xMidYMid meet">
+            <line stroke="rgba(255,255,255,0.2)" stroke-width="1" x1="0" y1="50" x2="500" y2="50" style="opacity: 0.5;" />
+            <line stroke="rgba(255,255,255,0.2)" stroke-width="1" x1="0" y1="125" x2="500" y2="125" style="opacity: 0.5;" />
+            <line stroke="rgba(255,255,255,0.2)" stroke-width="1" x1="0" y1="200" x2="500" y2="200" style="opacity: 0.5;" />
+
+            <path class="chart-area-fill" d="M -10,260 L -10,180 C 80,160 120,220 200,150 S 300,50 380,80 S 450,120 510,60 L 510,260 Z" />
+
+            <path class="chart-path" d="M -10,180 C 80,160 120,220 200,150 S 300,50 380,80 S 450,120 510,60" />
+
+            <circle class="chart-dot" r="6" cx="200" cy="150" style="animation-delay: 1.2s;"></circle>
+            <circle class="chart-dot" r="6" cx="380" cy="80" style="animation-delay: 1.8s;"></circle>
+            <circle class="chart-dot" r="6" cx="500" cy="60" style="animation-delay: 2.2s;"></circle>
+        </svg>
+    </div>
+
+    <div class="auth-form-side">
+        <div class="form-wrapper">
+            <div class="form-header-mobile">
+                <h2>Galilei</h2>
+                <p>Acesse sua conta</p>
+            </div>
+            
+            <h3 style="margin-bottom: 0.5rem; font-weight: 700; color: var(--primary-color);" class="d-none d-lg-block">Entrar</h3>
+            <p class="auth-subtitle d-none d-lg-block">Digite suas credenciais para acessar.</p>
+
+            <form id="login-form" novalidate>
+                <div class="form-group form-floating">
+                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
+                    <label for="email">Email</label>
+                    <div class="invalid-feedback">Por favor, insira seu email.</div>
+                </div>
+
+                <div class="form-group form-floating password-wrapper">
+                    <input type="password" id="password" name="password" class="form-control" placeholder=" " required>
+                    <label for="password">Senha</label>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password', this)" tabindex="-1" title="Ver senha">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </button>
+                    <div class="invalid-feedback">Por favor, insira sua senha.</div>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#">Esqueceu a senha?</a>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="form-btn">Entrar</button>
+                </div>
+            </form>
+            
+            <div class="form-footer mt-4 text-center">
+                <p style="margin: 0; padding: 0;">Não tem uma conta? <a asp-action="Register" style="font-weight: 700;">Cadastre-se</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const eyeOpen = btn.querySelector('.eye-open');
+            const eyeClosed = btn.querySelector('.eye-closed');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+                btn.classList.add('active');
+            } else {
+                input.type = "password";
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+                btn.classList.remove('active');
+            }
+        }
+
+        const form = document.getElementById('login-form');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    </script>
+}

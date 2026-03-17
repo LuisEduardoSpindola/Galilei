@@ -13,7 +13,6 @@ namespace Galilei.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Will implement later
             return View();
         }
     }

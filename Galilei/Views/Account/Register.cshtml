@@ -3,24 +3,22 @@
 }
 
 <style>
-    /* Fixed Layout to prevent scrolling */
     .auth-container {
         position: fixed;
-        top: 80px; /* Below navbar */
+        top: 80px;
         left: 0;
         width: 100%;
         height: calc(100vh - 80px);
         display: flex;
         overflow: hidden;
         background-color: var(--light-bg);
-        z-index: 50; /* Ensure it stays above footer/main padding */
+        z-index: 50;
     }
 
     body.dark-mode .auth-container {
         background-color: var(--dark-bg);
     }
 
-    /* Left Side: Visual */
     .auth-visual {
         flex: 1.2;
         background: linear-gradient(135deg, #FF8C00 0%, #FF5F00 100%);
@@ -64,21 +62,20 @@
         opacity: 0.95;
     }
 
-    /* Right Side: Form */
     .auth-form-side {
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Center vertically */
-        align-items: center;     /* Center horizontally */
+        justify-content: center;
+        align-items: center;
         padding: 2rem;
         background: transparent;
-        overflow-y: auto; /* Allow scroll only inside form if needed */
+        overflow-y: auto;
     }
 
     .form-wrapper {
          width: 100%;
-         max-width: 420px;
+         max-width: 520px;
          background: transparent;
          display: flex;
          flex-direction: column;
@@ -108,7 +105,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Floating Labels & Inputs */
     .form-floating {
         position: relative;
         margin-bottom: 1rem;
@@ -116,33 +112,40 @@
 
     .form-floating input {
         width: 100%;
-        padding: 1rem 0.75rem;
-        padding-top: 1.625rem;
-        padding-bottom: 0.625rem;
-        font-size: 0.95rem;
-        background-color: rgba(0,0,0,0.03); /* Subtle background */
-        border: 1px solid transparent; /* No border initially */
+        height: 65px; 
+        padding: 2rem 0.75rem 0.5rem 0.75rem; 
+        font-size: 1rem;
+        background-color: rgba(0,0,0,0.03);
+        border: 1px solid transparent;
         border-bottom: 2px solid var(--light-border);
         border-radius: 8px 8px 0 0;
-        color: inherit; /* Inherit from body */
+        color: var(--light-text, #333); 
         transition: all 0.2s ease;
-        height: 52px;
     }
 
     body.dark-mode .form-floating input {
         background-color: rgba(255,255,255,0.05);
         border-bottom-color: var(--dark-border);
+        color: var(--dark-text, #f8f9fa); 
     }
 
     .form-floating input:focus {
-        background-color: rgba(0,0,0,0.05); /* Slightly darker on focus */
+        background-color: rgba(0,0,0,0.05);
         border-bottom-color: var(--primary-color);
         outline: none;
-        box-shadow: none; /* No shadow */
+        box-shadow: none;
     }
 
     body.dark-mode .form-floating input:focus {
         background-color: rgba(255,255,255,0.08);
+    }
+
+    .form-control.is-invalid, .was-validated .form-control:invalid {
+        background-image: none !important;
+    }
+
+    .form-floating label::after {
+        display: none !important; 
     }
 
     .form-floating label {
@@ -150,29 +153,41 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
-        padding: 1rem 0.75rem;
+        height: 65px;
+        padding: 1.2rem 0.75rem; 
         pointer-events: none;
         border: 1px solid transparent;
         transform-origin: 0 0;
-        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
-        color: #777; /* Neutral label color */
+        transition: opacity .1s ease-in-out, transform .1s ease-in-out, color .2s ease-in-out;
+
+        color: var(--light-text, #333); 
+        opacity: 0.6; 
+        background-color: transparent !important;
         display: flex;
         align-items: center;
     }
 
     body.dark-mode .form-floating label {
-        color: #aaa;
+        color: var(--dark-text, #f8f9fa);
     }
 
     .form-floating input:focus ~ label,
     .form-floating input:not(:placeholder-shown) ~ label {
-        opacity: .7;
-        transform: scale(.8) translateY(-0.65rem) translateX(0.15rem);
+        transform: scale(0.8) translateY(-1.9rem) translateX(0.15rem);
         height: auto;
+        opacity: 0.9;
     }
 
-    /* Password Toggle */
+    .form-floating input:focus ~ label {
+        color: var(--primary-color);
+        opacity: 1;
+    }
+
+    body.dark-mode .form-floating input:focus ~ label {
+        color: var(--primary-color);
+        text-shadow: 0 0 1px rgba(0,0,0,0.5);
+    }
+
     .password-wrapper {
         position: relative;
     }
@@ -185,7 +200,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        padding: 8px; /* Larger hit area */
+        padding: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -204,7 +219,6 @@
         margin-top: 10px;
     }
 
-    /* Bar Chart Animation */
     .bar-chart {
         width: 100%;
         max-width: 400px;
@@ -247,11 +261,9 @@
         to { transform: scaleY(1); }
     }
 
-
-    /* Responsive */
     @@media (max-width: 992px) {
         .auth-container {
-            position: relative; /* Revert to relative for scrolling on mobile */
+            position: relative; 
             top: 0;
             height: auto;
             flex-direction: column;
@@ -265,7 +277,7 @@
         }
         .auth-form-side {
             padding: 3rem 1.5rem;
-            min-height: calc(100vh - 80px); /* Full height on mobile */
+            min-height: calc(100vh - 80px);
         }
         .form-wrapper {
             justify-content: flex-start;
@@ -274,7 +286,6 @@
 </style>
 
 <div class="auth-container">
-    <!-- Left side: Visual with Bar Chart -->
     <div class="auth-visual">
         <div class="auth-content animated fade-in-up" style="animation-duration: 0.8s;">
             <h2>Evolução Constante</h2>
@@ -292,7 +303,6 @@
         </div>
     </div>
 
-    <!-- Right side: Form -->
     <div class="auth-form-side">
         <div class="form-wrapper">
             <div class="form-header-mobile">
@@ -305,7 +315,7 @@
 
             <form id="register-form" novalidate>
                 <div class="form-group form-floating">
-                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Nome Completo" required>
+                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder=" " required>
                     <label for="fullName">Nome Completo</label>
                     <div class="invalid-feedback">O nome completo é obrigatório.</div>
                 </div>
@@ -313,14 +323,14 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <div class="form-group form-floating">
-                            <input type="text" id="cpf" name="cpf" class="form-control" placeholder="CPF" required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                            <input type="text" id="cpf" name="cpf" class="form-control" placeholder=" " required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
                             <label for="cpf">CPF</label>
                             <div class="invalid-feedback">CPF inválido.</div>
                         </div>
                     </div>
                     <div class="col-6">
                          <div class="form-group form-floating">
-                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="Telefone" required>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder=" " required>
                             <label for="phone">Telefone</label>
                             <div class="invalid-feedback">Telefone inválido.</div>
                         </div>
@@ -328,13 +338,13 @@
                 </div>
 
                 <div class="form-group form-floating">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
                     <label for="email">Email</label>
                     <div class="invalid-feedback">Por favor, insira um email válido.</div>
                 </div>
 
                 <div class="form-group form-floating password-wrapper">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Senha" required minlength="8">
+                    <input type="password" id="password" name="password" class="form-control" placeholder=" " required minlength="8">
                     <label for="password">Senha</label>
                     <button type="button" class="password-toggle" onclick="togglePassword('password', this)" tabindex="-1" title="Ver senha">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -344,7 +354,7 @@
                 </div>
 
                 <div class="form-group form-floating password-wrapper">
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirmar Senha" required>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder=" " required>
                     <label for="confirmPassword">Confirmar Senha</label>
                     <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)" tabindex="-1" title="Ver senha">
                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -364,7 +374,6 @@
 
 @section Scripts {
     <script>
-        // Toggle Password Visibility
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
             const eyeOpen = btn.querySelector('.eye-open');
@@ -383,7 +392,6 @@
             }
         }
 
-        // Basic CPF and Phone masking
         const cpfInput = document.getElementById('cpf');
         const phoneInput = document.getElementById('phone');
 
@@ -402,7 +410,6 @@
             e.target.value = value;
         });
 
-        // Frontend validation logic
         const form = document.getElementById('register-form');
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirmPassword');
@@ -427,7 +434,6 @@
             form.classList.add('was-validated');
         }, false);
 
-        // Real-time password confirmation check
         confirmPassword.addEventListener('input', () => {
             if (password.value !== confirmPassword.value) {
                 confirmPassword.setCustomValidity('Invalid');
