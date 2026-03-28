@@ -1,0 +1,170 @@
+@model ErrorViewModel
+@{
+    // ViewData["Title"] is set in Controller
+    var errorCode = ViewData["ErrorCode"] as string ?? "Error";
+    var errorMessage = ViewData["ErrorMessage"] as string ?? "Ocorreu um erro inesperado.";
+}
+
+<style>
+    .error-page-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 160px); /* Adjust based on header/footer */
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .error-code {
+        font-size: 8rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #FF4500 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .error-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--light-text);
+    }
+
+    body.dark-mode .error-title {
+        color: var(--dark-text);
+    }
+
+    .error-message {
+        font-size: 1.1rem;
+        color: var(--light-text);
+        opacity: 0.8;
+        max-width: 600px;
+        margin-bottom: 2rem;
+    }
+
+    body.dark-mode .error-message {
+        color: var(--dark-text);
+    }
+
+    .astronaut-visual {
+        width: 300px;
+        height: 300px;
+        margin-bottom: 2rem;
+        position: relative;
+        animation: float-astronaut 8s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @@keyframes float-astronaut {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(5deg); }
+    }
+
+    .return-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+    }
+
+    .return-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+        color: white;
+    }
+
+    /* Stars Background Effect */
+    .stars-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: var(--light-text);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: twinkle 4s infinite;
+    }
+
+    body.dark-mode .star {
+        background: white;
+    }
+
+    @@keyframes twinkle {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+</style>
+
+<div class="error-page-container">
+    <div class="stars-bg" id="stars-container"></div>
+
+    <div class="astronaut-visual">
+        <!-- Abstract generic astronaut SVG or planet -->
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <circle cx="100" cy="100" r="80" stroke="var(--primary-color)" stroke-width="2" stroke-dasharray="10 5" opacity="0.3" />
+            <circle cx="100" cy="100" r="60" stroke="var(--primary-color)" stroke-width="1" opacity="0.5" />
+            <!-- Planet -->
+            <circle cx="100" cy="100" r="40" fill="url(#planet-gradient)" />
+            <defs>
+                <linearGradient id="planet-gradient" x1="50" y1="50" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FF8C00"/>
+                    <stop offset="1" stop-color="#FF4500"/>
+                </linearGradient>
+            </defs>
+            <!-- Orbiting satellite -->
+            <circle cx="160" cy="100" r="5" fill="var(--light-text)">
+                <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="10s" repeatCount="indefinite" />
+            </circle>
+        </svg>
+    </div>
+
+    <h1 class="error-code">@errorCode</h1>
+    <h2 class="error-title">@ViewData["Title"]</h2>
+    <p class="error-message">@errorMessage</p>
+
+    <a asp-controller="Home" asp-action="Index" class="return-btn">Voltar para o Início</a>
+
+    @if (Model?.ShowRequestId ?? false)
+    {
+        <p style="margin-top: 2rem; font-size: 0.8rem; opacity: 0.5;">
+            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        </p>
+    }
+</div>
+
+<script>
+    // Generate random stars
+    const container = document.getElementById('stars-container');
+    const starCount = 50;
+    
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 4}s`;
+        container.appendChild(star);
+    }
+</script>

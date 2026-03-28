@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    .dashboard-container {
+        padding: 2rem 0;
+    }
+    
+    .welcome-header {
+
+
+
+        margin-bottom: 2rem;
+    }
+    
+    .welcome-header h1 {
+        font-weight: 700;
+        color: var(--light-text);
+    }
+    
+    body.dark-mode .welcome-header h1 {
+        color: var(--dark-text);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s;
+    }
+    
+    body.dark-mode .stat-card {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--light-text);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+    
+    body.dark-mode .stat-label {
+        color: var(--dark-text);
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .dashboard-visual {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    body.dark-mode .dashboard-visual {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+    
+    .chart-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light-text);
+        opacity: 0.5;
+        border: 2px dashed var(--light-border);
+        border-radius: 8px;
+    }
+    
+    body.dark-mode .chart-placeholder {
+        color: var(--dark-text);
+        border-color: var(--dark-border);
+    }
+
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-header animated fade-in-up">
+        <h1>Olá, @User.Identity.Name!</h1>
+        <p>Bem-vindo ao seu painel de controle.</p>
+    </div>
+    
+    <div class="stats-grid animated fade-in-up" style="animation-delay: 0.1s;">
+        <div class="stat-card">
+            <div class="stat-label">Patrimônio Total</div>
+            <div class="stat-value">R$ 15.420,50</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Rendimento Mês</div>
+            <div class="stat-value">+ R$ 340,20</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Carteiras Ativas</div>
+            <div class="stat-value">3</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Próximo Dividendo</div>
+            <div class="stat-value">R$ 45,00</div>
+        </div>
+    </div>
+    
+    <div class="dashboard-visual animated fade-in-up" style="animation-delay: 0.2s;">
+        <h3 style="margin-bottom: 1rem; align-self: flex-start; var(--light-text);">Evolução Patrimonial</h3>
+        <div class="chart-placeholder">
+            <p>Gráfico de evolução será carregado aqui...</p>
+        </div>
+    </div>
+</div>

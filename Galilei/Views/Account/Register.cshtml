@@ -1,3 +1,4 @@
+@model Galilei.Models.User
 @{
     ViewData["Title"] = "Crie sua Conta";
 }
@@ -261,6 +262,35 @@
         to { transform: scaleY(1); }
     }
 
+    .register-alert {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-left: 4px solid #dc3545;
+        padding: 1rem 1.25rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        color: #dc3545;
+        font-weight: 500;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    body.dark-mode .register-alert {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #ff6b6b;
+    }
+
+    .register-alert ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    /* Animation for shake effect */
+    @@keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
     @@media (max-width: 992px) {
         .auth-container {
             position: relative; 
@@ -313,33 +343,44 @@
             <h3 style="margin-bottom: 0.5rem; font-weight: 700; color: var(--primary-color);" class="d-none d-lg-block">Criar Conta</h3>
             <p class="auth-subtitle d-none d-lg-block">Preencha seus dados para começar.</p>
 
-            <form id="register-form" novalidate>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="register-alert animated fade-in-up">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </div>
+            }
+
+            <form id="register-form" method="post" asp-action="Register" novalidate>
                 <div class="form-group form-floating">
-                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder=" " required>
+                    <input type="text" id="fullName" asp-for="FullName" class="form-control" placeholder=" " required>
                     <label for="fullName">Nome Completo</label>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
                     <div class="invalid-feedback">O nome completo é obrigatório.</div>
                 </div>
 
                 <div class="row g-2">
                     <div class="col-6">
                         <div class="form-group form-floating">
-                            <input type="text" id="cpf" name="cpf" class="form-control" placeholder=" " required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                            <input type="text" id="cpf" asp-for="Cpf" class="form-control" placeholder=" " required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
                             <label for="cpf">CPF</label>
+                            <span asp-validation-for="Cpf" class="text-danger"></span>
                             <div class="invalid-feedback">CPF inválido.</div>
                         </div>
                     </div>
                     <div class="col-6">
                          <div class="form-group form-floating">
-                            <input type="tel" id="phone" name="phone" class="form-control" placeholder=" " required>
+                            <input type="tel" id="phone" asp-for="Phone" class="form-control" placeholder=" " required>
                             <label for="phone">Telefone</label>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
                             <div class="invalid-feedback">Telefone inválido.</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group form-floating">
-                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
+                    <input type="email" id="email" asp-for="Email" class="form-control" placeholder=" " required>
                     <label for="email">Email</label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
                     <div class="invalid-feedback">Por favor, insira um email válido.</div>
                 </div>
 
