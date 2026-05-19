@@ -19,11 +19,5 @@ namespace Galilei.Controllers
             var news = await _marketDataService.GetFinancialNewsAsync();
             return View(news);
         }
-
-        public async Task<IActionResult> Platforms()
-        {
-            var platforms = await _marketDataService.GetPlatformsAsync();
-            return View(platforms);
-        }
     }
 }

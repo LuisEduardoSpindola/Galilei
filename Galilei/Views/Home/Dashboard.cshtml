@@ -1,3 +1,4 @@
+@model Galilei.Models.Portfolio.PortfolioViewModel
 @{
     ViewData["Title"] = "Dashboard";
 }
@@ -104,32 +105,63 @@
 <div class="dashboard-container">
     <div class="welcome-header animated fade-in-up">
         <h1>Olá, @User.Identity.Name!</h1>
-        <p>Bem-vindo ao seu painel de controle.</p>
+        <p>Bem-vindo ao seu painel com base na sua carteira da B3.</p>
     </div>
-    
+
     <div class="stats-grid animated fade-in-up" style="animation-delay: 0.1s;">
         <div class="stat-card">
-            <div class="stat-label">Patrimônio Total</div>
-            <div class="stat-value">R$ 15.420,50</div>
+            <div class="stat-label">Total Investido</div>
+            <div class="stat-value">R$ @Model.TotalInvested.ToString("N2")</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Rendimento Mês</div>
-            <div class="stat-value">+ R$ 340,20</div>
+            <div class="stat-label">Saldo Atual</div>
+            <div class="stat-value">R$ @Model.CurrentBalance.ToString("N2")</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Carteiras Ativas</div>
-            <div class="stat-value">3</div>
+            <div class="stat-label">Lucro / Prejuízo</div>
+            <div class="stat-value">R$ @Model.TotalProfitLoss.ToString("N2")</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Próximo Dividendo</div>
-            <div class="stat-value">R$ 45,00</div>
+            <div class="stat-label">Ativos na Carteira</div>
+            <div class="stat-value">@Model.AssetsCount</div>
         </div>
     </div>
-    
+
     <div class="dashboard-visual animated fade-in-up" style="animation-delay: 0.2s;">
-        <h3 style="margin-bottom: 1rem; align-self: flex-start; var(--light-text);">Evolução Patrimonial</h3>
+        <h3 style="margin-bottom: 1rem; align-self: flex-start; var(--light-text);">Resumo dos Ativos</h3>
         <div class="chart-placeholder">
-            <p>Gráfico de evolução será carregado aqui...</p>
+            @if (Model.Assets.Any())
+            {
+                <div class="table-responsive w-100">
+                    <table class="table table-borderless align-middle mb-0">
+                        <thead>
+                            <tr style="opacity: 0.7;">
+                                <th>Ativo</th>
+                                <th>Preço Atual</th>
+                                <th>Preço Desejado</th>
+                                <th>Direção</th>
+                                <th>Alerta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var asset in Model.Assets.Take(5))
+                            {
+                                <tr>
+                                    <td>@asset.Ticker</td>
+                                    <td>R$ @asset.CurrentPrice.ToString("N2")</td>
+                                    <td>R$ @asset.DesiredPrice.ToString("N2")</td>
+                                    <td>@asset.DesiredPriceType</td>
+                                    <td>@(asset.IsTargetNotified ? "Enviado" : "Aguardando")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p>Você ainda não cadastrou ativos. Adicione o primeiro na sua carteira.</p>
+            }
         </div>
     </div>
 </div>

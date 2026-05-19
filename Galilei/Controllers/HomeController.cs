@@ -2,16 +2,64 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Galilei.Models;
+using Galilei.Data;
+using Galilei.Services;
+using Galilei.Models.Portfolio;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Galilei.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly GalileiContext _context;
+        private readonly IMarketDataService _marketService;
+        private readonly IPriceAlertService _priceAlertService;
+
+        public HomeController(GalileiContext context, IMarketDataService marketService, IPriceAlertService priceAlertService)
+        {
+            _context = context;
+            _marketService = marketService;
+            _priceAlertService = priceAlertService;
+        }
+
+        public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
             {
-                return View("Dashboard");
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var userAssets = await _context.UserAssets
+                    .Where(a => a.UserId == userId)
+                    .ToListAsync();
+
+                var tickers = userAssets.Select(a => a.Ticker).Distinct().ToList();
+                var marketData = await _marketService.GetMarketDataForTickersAsync(tickers);
+
+                await _priceAlertService.CheckAndSendAsync(userId, userAssets, marketData);
+
+                var viewModel = new PortfolioViewModel();
+
+                foreach (var asset in userAssets)
+                {
+                    var marketInfo = marketData.FirstOrDefault(m => m.Symbol == asset.Ticker);
+                    decimal currentPrice = marketInfo?.Price ?? asset.AveragePrice;
+                    decimal change24h = marketInfo?.ChangePercentage24h ?? 0;
+
+                    viewModel.Assets.Add(new AssetItemViewModel
+                    {
+                        Id = asset.Id,
+                        Ticker = asset.Ticker,
+                        Quantity = asset.Quantity,
+                        AveragePrice = asset.AveragePrice,
+                        DesiredPrice = asset.DesiredPrice,
+                        DesiredPriceType = asset.DesiredPriceType,
+                        IsTargetNotified = asset.IsTargetNotified,
+                        CurrentPrice = currentPrice,
+                        ChangePercentage24h = change24h
+                    });
+                }
+
+                return View("Dashboard", viewModel);
             }
             return View();
         }

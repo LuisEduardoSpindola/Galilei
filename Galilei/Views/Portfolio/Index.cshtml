@@ -1,0 +1,212 @@
+@model Galilei.Models.Portfolio.PortfolioViewModel
+@{
+    ViewData["Title"] = "Meus Ativos";
+}
+
+<style>
+    .portfolio-container {
+        padding: 2rem 0;
+    }
+    .portfolio-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .portfolio-title {
+        font-weight: 700;
+    }
+    .add-asset-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 24px;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: opacity 0.2s, transform 0.2s;
+    }
+    .add-asset-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    /* Resumo Cards */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    .summary-card {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+    }
+    body.dark-mode .summary-card {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+    .summary-label {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+    .summary-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+    .text-positive { color: #2ecc71; }
+    .text-negative { color: #e74c3c; }
+
+    .table-container {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        overflow-x: auto;
+    }
+    body.dark-mode .table-container {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+    
+    .portfolio-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+    .portfolio-table th, .portfolio-table td {
+        padding: 1.2rem 1rem;
+        text-align: right;
+        border-bottom: 1px solid var(--light-border);
+    }
+    .portfolio-table th:first-child, .portfolio-table td:first-child {
+        text-align: left;
+    }
+    body.dark-mode .portfolio-table th, 
+    body.dark-mode .portfolio-table td {
+        border-bottom-color: var(--dark-border);
+    }
+    .portfolio-table th {
+        font-weight: 600;
+        opacity: 0.7;
+        font-size: 0.9rem;
+    }
+    .portfolio-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        opacity: 0.7;
+    }
+
+    .asset-badge {
+        display: inline-block;
+        background-color: rgba(255,140,0,0.1);
+        color: var(--primary-color);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="portfolio-container">
+    <div class="portfolio-header animated fade-in-up">
+        <h2 class="portfolio-title">Meus Ativos</h2>
+        <a href="@Url.Action("AddAsset", "Portfolio")" class="add-asset-btn">+ Adicionar Ativo</a>
+    </div>
+
+    @if (Model.Assets.Any())
+    {
+        <div class="summary-grid animated fade-in-up" style="animation-delay: 0.1s;">
+            <div class="summary-card">
+                <div class="summary-label">Total Investido</div>
+                <div class="summary-value" style="color: var(--primary-color);">
+                    R$ @Model.TotalInvested.ToString("N2")
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Saldo Atual</div>
+                <div class="summary-value">
+                    R$ @Model.CurrentBalance.ToString("N2")
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Lucro / Prejuízo</div>
+                <div class="summary-value @(Model.TotalProfitLoss >= 0 ? "text-positive" : "text-negative")">
+                    R$ @Model.TotalProfitLoss.ToString("N2") 
+                    <span style="font-size: 1rem; opacity: 0.8;">(@Model.TotalProfitLossPercentage.ToString("N2")%)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container animated fade-in-up" style="animation-delay: 0.2s;">
+            <table class="portfolio-table">
+                <thead>
+                    <tr>
+                        <th>Ativo</th>
+                        <th>Quantidade</th>
+                        <th>Preço Médio (R$)</th>
+                        <th>Preço Desejado (R$)</th>
+                        <th>Tipo</th>
+                        <th>Preço Atual (R$)</th>
+                        <th>Variação 24h</th>
+                        <th>Total Investido (R$)</th>
+                        <th>Saldo Atual (R$)</th>
+                        <th>L/P (R$)</th>
+                        <th>Alerta</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var asset in Model.Assets)
+                    {
+                        <tr>
+                            <td><span class="asset-badge">@asset.Ticker</span></td>
+                            <td>@asset.Quantity</td>
+                            <td>@asset.AveragePrice.ToString("N2")</td>
+                            <td>@asset.DesiredPrice.ToString("N2")</td>
+                            <td>@asset.DesiredPriceType</td>
+                            <td style="font-weight: 600;">@asset.CurrentPrice.ToString("N2")</td>
+                            <td class="@(asset.ChangePercentage24h >= 0 ? "text-positive" : "text-negative")">
+                                @(asset.ChangePercentage24h > 0 ? "+" : "")@asset.ChangePercentage24h.ToString("N2")%
+                            </td>
+                            <td>@asset.TotalInvested.ToString("N2")</td>
+                            <td style="font-weight:600;">@asset.CurrentTotal.ToString("N2")</td>
+                            <td class="@(asset.ProfitLoss >= 0 ? "text-positive" : "text-negative")" style="font-weight:600;">
+                                @(asset.ProfitLoss > 0 ? "+" : "")@asset.ProfitLoss.ToString("N2") <br/>
+                                <span style="font-size:0.8rem">@(asset.ProfitLossPercentage > 0 ? "+" : "")@asset.ProfitLossPercentage.ToString("N2")%</span>
+                            </td>
+                            <td>
+                                @(asset.IsTargetNotified ? "Enviado" : "Aguardando")
+                            </td>
+                            <td>
+                                <form asp-action="RemoveAsset" asp-controller="Portfolio" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja remover este ativo da sua carteira?');">
+                                    <input type="hidden" name="id" value="@asset.Id" />
+                                    <button type="submit" class="btn btn-sm" style="background-color: var(--primary-color); color: white;" title="Remover Ativo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="table-container animated fade-in-up" style="animation-delay: 0.1s;">
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-3" style="opacity: 0.5;"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 9-3-3-3 3"/><path d="M11 18h6a2 2 0 0 0 2-2V6"/></svg>
+                <h4>Você ainda não adicionou ativos à sua carteira.</h4>
+                <p>Comece a montar seu portfólio clicando no botão acima.</p>
+            </div>
+        </div>
+    }
+</div>

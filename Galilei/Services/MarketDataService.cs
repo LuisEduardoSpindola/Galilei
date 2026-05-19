@@ -15,6 +15,48 @@ namespace Galilei.Services
             _logger = logger;
         }
 
+        public async Task<List<string>> GetB3TickersAsync()
+        {
+            await Task.Delay(100);
+            var tickers = new List<string> 
+            {
+                "PETR4", "PETR3", "VALE3", "ITUB4", "BBDC4", "BBDC3", "BBAS3", "ABEV3", "WEGE3", "RENT3",
+                "SUZB3", "BPAC11", "EQTL3", "RADL3", "B3SA3", "LREN3", "GGBR4", "HAPV3", "PRIO3", "RAIL3",
+                "JBSS3", "SBSP3", "VIVT3", "CMIG4", "BBSE3", "CPLE6", "KLBN11", "ELET3", "ELET6", "CSAN3",
+                "TIMS3", "CCRO3", "TOTS3", "EGIE3", "ENEV3", "CSNA3", "CYRE3", "YDUQ3", "MGLU3", "COGN3"
+            };
+            return tickers.OrderBy(t => t).ToList();
+        }
+
+        public async Task<List<AssetData>> GetMarketDataForTickersAsync(IEnumerable<string> tickers)
+        {
+            await Task.Delay(150); // simulate API call
+            var random = new Random();
+            var result = new List<AssetData>();
+
+            foreach (var ticker in tickers.Distinct())
+            {
+                // Generate mock price around 50 based on hash of ticker to make it "stable" between reloads
+                int seed = ticker.GetHashCode();
+                var pseudoRandom = new Random(seed);
+                decimal basePrice = pseudoRandom.Next(20, 150) + (decimal)pseudoRandom.NextDouble();
+
+                // Random variation from -5% to +5% each call
+                decimal variation = (decimal)((random.NextDouble() * 10) - 5);
+                decimal currentPrice = basePrice * (1 + (variation / 100));
+
+                result.Add(new AssetData
+                {
+                    Symbol = ticker,
+                    Name = ticker + " S.A.",
+                    Price = currentPrice,
+                    ChangePercentage24h = variation
+                });
+            }
+
+            return result;
+        }
+
         public async Task<List<NewsArticle>> GetFinancialNewsAsync()
         {
             try
@@ -63,75 +105,6 @@ namespace Galilei.Services
                 _logger.LogError(ex, "Error fetching news from API.");
                 return new List<NewsArticle>();
             }
-        }
-
-        public async Task<List<PlatformRecommendation>> GetPlatformsAsync()
-        {
-            await Task.Delay(100);
-            return new List<PlatformRecommendation>
-            {
-                new PlatformRecommendation
-                {
-                    Name = "XP Investimentos",
-                    Category = "Corretora",
-                    Rating = "4.8/5",
-                    Description = "Maior ecossistema de investimentos do Brasil, excelente para renda fixa e variável.",
-                    Link = "https://xpi.com.br",
-                    ImageUrl = "https://images.unsplash.com/photo-1560472355-536de3962603?q=80&w=400&auto=format&fit=crop"
-                },
-                new PlatformRecommendation
-                {
-                    Name = "Avenue",
-                    Category = "Corretora Internacional",
-                    Rating = "4.7/5",
-                    Description = "Plataforma focada em investidores brasileiros que desejam acessar o mercado americano de forma simplificada.",
-                    Link = "https://avenue.us",
-                    ImageUrl = "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?q=80&w=400&auto=format&fit=crop"
-                },
-                new PlatformRecommendation
-                {
-                    Name = "Suno Educação",
-                    Category = "Educação Financeira",
-                    Rating = "4.9/5",
-                    Description = "Análises independentes, relatórios e cursos para formar investidores de sucesso a longo prazo.",
-                    Link = "https://sunoresearch.com.br",
-                    ImageUrl = "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=400&auto=format&fit=crop"
-                }
-            };
-        }
-
-        public async Task<List<AssetData>> GetCryptoDataAsync()
-        {
-            try 
-            {
-                // Can integrate with CoinGecko Public API here: https://api.coingecko.com/api/v3/coins/markets?vs_currency=brl
-                // _httpClient.BaseAddress = new Uri("https://api.coingecko.com/api/v3/");
-                await Task.Delay(300);
-                return new List<AssetData>
-                {
-                    new AssetData { Symbol = "BTC", Name = "Bitcoin", Price = 345000m, ChangePercentage24h = 2.5m, Volume = 50000000000m },
-                    new AssetData { Symbol = "ETH", Name = "Ethereum", Price = 18500m, ChangePercentage24h = -1.2m, Volume = 20000000000m },
-                    new AssetData { Symbol = "SOL", Name = "Solana", Price = 800m, ChangePercentage24h = 5.7m, Volume = 5000000000m },
-                    new AssetData { Symbol = "ADA", Name = "Cardano", Price = 3.5m, ChangePercentage24h = 0.5m, Volume = 400000000m },
-                };
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Crypto api failed.");
-                return new List<AssetData>();
-            }
-        }
-
-        public async Task<List<AssetData>> GetUSStocksDataAsync()
-        {
-            await Task.Delay(300);
-            return new List<AssetData>
-            {
-                new AssetData { Symbol = "AAPL", Name = "Apple Inc.", Price = 185.92m, ChangePercentage24h = 1.1m, Volume = 60000000m },
-                new AssetData { Symbol = "MSFT", Name = "Microsoft Corp.", Price = 398.21m, ChangePercentage24h = 0.4m, Volume = 25000000m },
-                new AssetData { Symbol = "GOOG", Name = "Alphabet Inc.", Price = 145.22m, ChangePercentage24h = -0.5m, Volume = 15000000m },
-                new AssetData { Symbol = "TSLA", Name = "Tesla Inc.", Price = 202.64m, ChangePercentage24h = 3.2m, Volume = 35000000m },
-            };
         }
 
         public async Task<List<AssetData>> GetBRStocksDataAsync()

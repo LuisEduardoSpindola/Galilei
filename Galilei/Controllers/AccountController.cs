@@ -68,7 +68,7 @@ namespace Galilei.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email); 
             if (user == null || user.PasswordHash != HashPassword(password))
             {
                 ModelState.AddModelError(string.Empty, "Email ou senha inválidos.");
@@ -126,7 +126,6 @@ namespace Galilei.Controllers
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            // Use a secret key. In production, store this securely in appsettings.json or User Secrets
             var key = Encoding.ASCII.GetBytes("ThisIsASecretKeyForGalileiJwtTokenGeneration_ChangeMeInProduction");
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -16,16 +16,14 @@
             <div class="nav-actions d-flex align-items-center gap-3">
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <a class="nav-link" asp-area="" asp-controller="Portfolio" asp-action="Index">Minha Carteira</a>
                     <a class="nav-link" asp-area="" asp-controller="Market" asp-action="News">Notícias</a>
-                    <a class="nav-link" asp-area="" asp-controller="Market" asp-action="Platforms">Plataformas</a>
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" id="dashboardsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Dashboards
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dashboardsDropdown">
-                            <li><a class="dropdown-item" asp-controller="Dashboards" asp-action="Crypto">Criptomoedas</a></li>
-                            <li><a class="dropdown-item" asp-controller="Dashboards" asp-action="USStocks">Ações Americanas</a></li>
-                            <li><a class="dropdown-item" asp-controller="Dashboards" asp-action="BRStocks">Ações Brasileiras</a></li>
+                            <li><a class="dropdown-item" asp-controller="Dashboards" asp-action="BRStocks">Ações B3</a></li>
                             <li><a class="dropdown-item" asp-controller="Dashboards" asp-action="FixedIncome">Renda Fixa</a></li>
                         </ul>
                     </div>

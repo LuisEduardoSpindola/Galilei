@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient<IMarketDataService, MarketDataService>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPriceAlertService, PriceAlertService>();
 
 builder.Services.AddDbContext<GalileiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GalileiContext")));

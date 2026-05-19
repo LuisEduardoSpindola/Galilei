@@ -1,0 +1,145 @@
+@model Galilei.Models.UserAsset
+@{
+    ViewData["Title"] = "Adicionar Ativo";
+    var tickers = ViewBag.Tickers as List<string> ?? new List<string>();
+}
+
+<style>
+    .add-asset-container {
+        padding: 3rem 0;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .add-asset-card {
+        background: var(--light-card-bg);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow);
+    }
+    body.dark-mode .add-asset-card {
+        background: var(--dark-card-bg);
+        box-shadow: var(--shadow-dark);
+    }
+    
+    .form-title {
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: var(--primary-color);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--light-border);
+        border-radius: 8px;
+        background-color: transparent;
+        color: inherit;
+        transition: border-color 0.2s;
+    }
+    
+    body.dark-mode .form-control {
+        border-color: var(--dark-border);
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+    }
+    
+    .submit-btn {
+        width: 100%;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        margin-top: 1rem;
+    }
+    
+    .submit-btn:hover {
+        background-color: #e67e00;
+        transform: translateY(-2px);
+    }
+    
+</style>
+
+<div class="add-asset-container animated fade-in-up">
+    <div class="add-asset-card">
+        <h2 class="form-title">Registrar Ativo</h2>
+        
+        <form asp-action="AddAsset" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group">
+                <label asp-for="Ticker" class="form-label">Ticker (Código do Ativo na B3)</label>
+                <input asp-for="Ticker" class="form-control" list="tickerOptions" placeholder="Ex: PETR4" required autocomplete="off" />
+                <datalist id="tickerOptions">
+                    @foreach (var t in tickers)
+                    {
+                        <option value="@t"></option>
+                    }
+                </datalist>
+                <span asp-validation-for="Ticker" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label asp-for="Quantity" class="form-label">Quantidade</label>
+                    <input asp-for="Quantity" type="number" class="form-control" min="1" step="1" required />
+                    <span asp-validation-for="Quantity" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label asp-for="AveragePrice" class="form-label">Preço Médio (R$)</label>
+                    <input asp-for="AveragePrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                    <span asp-validation-for="AveragePrice" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label asp-for="DesiredPriceType" class="form-label">Tipo do Preço Desejado</label>
+                    <select asp-for="DesiredPriceType" class="form-control" required>
+                        <option value="Compra">Compra</option>
+                        <option value="Venda">Venda</option>
+                    </select>
+                    <span asp-validation-for="DesiredPriceType" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label asp-for="DesiredPrice" class="form-label">Preço Desejado (R$)</label>
+                    <input asp-for="DesiredPrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                    <span asp-validation-for="DesiredPrice" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn mt-4">Salvar Ativo na Carteira</button>
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Index")" class="text-decoration-none" style="color: var(--light-text); opacity: 0.7;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
