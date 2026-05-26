@@ -17,15 +17,15 @@ namespace Galilei.Controllers
         public async Task<IActionResult> BRStocks()
         {
             var data = await _marketDataService.GetBRStocksDataAsync();
-            ViewData["Title"] = "Dashboard - Ações B3";
-            return View("GenericDashboard", data);
+            ViewData["Title"] = "Home Broker - Ações B3";
+            return View(data);
         }
 
         public async Task<IActionResult> FixedIncome()
         {
             var data = await _marketDataService.GetFixedIncomeDataAsync();
             ViewData["Title"] = "Dashboard - Renda Fixa";
-            return View("GenericDashboard", data);
+            return View(data);
         }
     }
 }

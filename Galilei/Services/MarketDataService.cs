@@ -30,31 +30,72 @@ namespace Galilei.Services
 
         public async Task<List<AssetData>> GetMarketDataForTickersAsync(IEnumerable<string> tickers)
         {
-            await Task.Delay(150); // simulate API call
-            var random = new Random();
             var result = new List<AssetData>();
+            if (tickers == null || !tickers.Any()) return result;
 
-            foreach (var ticker in tickers.Distinct())
+            var distinctTickers = tickers.Distinct().ToList();
+            var tasks = distinctTickers.Select(async ticker =>
             {
-                // Generate mock price around 50 based on hash of ticker to make it "stable" between reloads
-                int seed = ticker.GetHashCode();
-                var pseudoRandom = new Random(seed);
-                decimal basePrice = pseudoRandom.Next(20, 150) + (decimal)pseudoRandom.NextDouble();
+                try
+                {
+                    // Yahoo Finance API expects .SA for B3 stocks
+                    string queryTicker = ticker.EndsWith(".SA", StringComparison.OrdinalIgnoreCase) ? ticker : $"{ticker}.SA";
 
-                // Random variation from -5% to +5% each call
-                decimal variation = (decimal)((random.NextDouble() * 10) - 5);
-                decimal currentPrice = basePrice * (1 + (variation / 100));
+                    var request = new HttpRequestMessage(HttpMethod.Get, $"https://query2.finance.yahoo.com/v8/finance/chart/{queryTicker}");
+                    request.Headers.Add("User-Agent", "Mozilla/5.0");
 
-                result.Add(new AssetData
+                    var response = await _httpClient.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var jsonDoc = JsonDocument.Parse(content);
+                        var resultElement = jsonDoc.RootElement.GetProperty("chart").GetProperty("result")[0];
+                        var meta = resultElement.GetProperty("meta");
+
+                        decimal regularMarketPrice = meta.GetProperty("regularMarketPrice").GetDecimal();
+                        decimal previousClose = meta.GetProperty("chartPreviousClose").GetDecimal();
+
+                        decimal change = 0;
+                        if (previousClose > 0)
+                        {
+                            change = ((regularMarketPrice - previousClose) / previousClose) * 100;
+                        }
+
+                        string name = ticker;
+                        if (meta.TryGetProperty("shortName", out var shortName) && shortName.ValueKind == JsonValueKind.String)
+                        {
+                            name = shortName.GetString() ?? ticker;
+                        }
+
+                        return new AssetData
+                        {
+                            Symbol = ticker,
+                            Name = name,
+                            Price = regularMarketPrice,
+                            ChangePercentage24h = change
+                        };
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to fetch real market data for {Ticker}. Status: {StatusCode}", ticker, response.StatusCode);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error fetching market data from API for {Ticker}", ticker);
+                }
+
+                return new AssetData
                 {
                     Symbol = ticker,
-                    Name = ticker + " S.A.",
-                    Price = currentPrice,
-                    ChangePercentage24h = variation
-                });
-            }
+                    Name = ticker,
+                    Price = 0,
+                    ChangePercentage24h = 0
+                };
+            });
 
-            return result;
+            var assetDataArray = await Task.WhenAll(tasks);
+            return assetDataArray.ToList();
         }
 
         public async Task<List<NewsArticle>> GetFinancialNewsAsync()
@@ -109,14 +150,8 @@ namespace Galilei.Services
 
         public async Task<List<AssetData>> GetBRStocksDataAsync()
         {
-            await Task.Delay(300);
-            return new List<AssetData>
-            {
-                new AssetData { Symbol = "PETR4", Name = "Petrobras PN", Price = 41.50m, ChangePercentage24h = 0.8m, Volume = 80000000m },
-                new AssetData { Symbol = "VALE3", Name = "Vale ON", Price = 62.10m, ChangePercentage24h = -1.5m, Volume = 30000000m },
-                new AssetData { Symbol = "ITUB4", Name = "Itaú Unibanco PN", Price = 33.40m, ChangePercentage24h = 1.2m, Volume = 45000000m },
-                new AssetData { Symbol = "B3SA3", Name = "B3 SA", Price = 12.80m, ChangePercentage24h = 0.2m, Volume = 25000000m },
-            };
+            var tickers = new List<string> { "PETR4", "VALE3", "ITUB4", "B3SA3" };
+            return await GetMarketDataForTickersAsync(tickers);
         }
 
         public async Task<List<AssetData>> GetFixedIncomeDataAsync()

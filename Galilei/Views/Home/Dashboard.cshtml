@@ -4,164 +4,500 @@
 }
 
 <style>
+    /* Variáveis base (caso não estejam no seu CSS global) */
+    :root {
+        --border-radius-lg: 12px;
+        --border-radius-md: 8px;
+        --transition-speed: 0.2s;
+    }
+
     .dashboard-container {
-        padding: 2rem 0;
+        padding: 2.5rem 0;
     }
-    
+
+    /* Header */
     .welcome-header {
-
-
-
-        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
     }
-    
+
     .welcome-header h1 {
-        font-weight: 700;
+        font-weight: 800;
+        letter-spacing: -0.5px;
         color: var(--light-text);
+        margin: 0 0 0.25rem 0;
     }
-    
-    body.dark-mode .welcome-header h1 {
-        color: var(--dark-text);
+
+    .welcome-cta {
+        display: flex;
+        gap: 0.75rem;
     }
-    
+
+    .welcome-cta .btn {
+        border-radius: var(--border-radius-md);
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Grid de Estatísticas */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 1.5rem;
-        margin-bottom: 3rem;
-    }
-    
-    .stat-card {
-        background: var(--light-card-bg);
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        box-shadow: var(--shadow);
-        transition: transform 0.2s;
-    }
-    
-    body.dark-mode .stat-card {
-        background: var(--dark-card-bg);
-        box-shadow: var(--shadow-dark);
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: var(--light-text);
-        opacity: 0.7;
-        margin-bottom: 0.5rem;
-    }
-    
-    body.dark-mode .stat-label {
-        color: var(--dark-text);
-    }
-    
-    .stat-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-    
-    .dashboard-visual {
-        background: var(--light-card-bg);
-        border-radius: var(--border-radius);
-        padding: 2rem;
-        box-shadow: var(--shadow);
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         margin-bottom: 2rem;
     }
-    
-    body.dark-mode .dashboard-visual {
-        background: var(--dark-card-bg);
-        box-shadow: var(--shadow-dark);
+
+    .stat-card {
+        background: var(--light-card-bg, #ffffff);
+        border-radius: var(--border-radius-lg);
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all var(--transition-speed) ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
     }
-    
-    .chart-placeholder {
-        width: 100%;
-        height: 100%;
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--light-text);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.7;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--light-text);
-        opacity: 0.5;
-        border: 2px dashed var(--light-border);
-        border-radius: 8px;
-    }
-    
-    body.dark-mode .chart-placeholder {
-        color: var(--dark-text);
-        border-color: var(--dark-border);
+        font-size: 1.25rem;
     }
 
+    .icon-blue { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .icon-green { background: rgba(25, 135, 84, 0.1); color: #198754; }
+    .icon-purple { background: rgba(111, 66, 193, 0.1); color: #6f42c1; }
+    .icon-orange { background: rgba(253, 126, 20, 0.1); color: #fd7e14; }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--light-text);
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-small {
+        font-size: 0.85rem;
+        color: var(--light-text);
+        opacity: 0.75;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* Main Dashboard Area */
+    .dashboard-main {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 1100px) {
+        .dashboard-main {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: var(--light-card-bg, #ffffff);
+        border-radius: var(--border-radius-lg);
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .panel-header h5 {
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Tabela de Ativos */
+    .assets-table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        color: #6c757d;
+        border-bottom: 2px solid rgba(0,0,0,0.05);
+        padding-bottom: 0.75rem;
+    }
+
+    .assets-table td {
+        vertical-align: middle;
+        padding: 1rem 0.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .ticker-badge {
+        display: inline-block;
+        background: rgba(255, 140, 0, 0.1);
+        color: var(--primary-color);
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    /* Badges de Lucro/Prejuízo */
+    .badge-soft-success {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        padding: 0.35rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-soft-danger {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        padding: 0.35rem 0.6rem;
+        border-radius: 6px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    /* Lista de Alertas */
+    .alert-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    
+    .alert-item:last-child {
+        border-bottom: none;
+    }
+
+    .alert-icon {
+        color: #ffc107;
+        font-size: 1.25rem;
+        background: rgba(255, 193, 7, 0.1);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .sparkline {
+        height: 30px;
+        width: 100px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+        display: inline-block;
+    }
+
+    .empty-cta {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        background: rgba(0,0,0,0.01);
+        border-radius: var(--border-radius-md);
+        border: 1px dashed rgba(0,0,0,0.1);
+    }
+
+    /* Dark Mode Suporte */
+    body.dark-mode .welcome-header h1,
+    body.dark-mode .stat-value,
+    body.dark-mode .panel-header h5,
+    body.dark-mode .assets-table td strong {
+        color: var(--dark-text, #f8f9fa) !important;
+    }
+
+    body.dark-mode .stat-card,
+    body.dark-mode .panel {
+        background: var(--dark-card-bg, #1e1e1e);
+        border-color: rgba(255,255,255,0.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .stat-label,
+    body.dark-mode .stat-small,
+    body.dark-mode .assets-table th,
+    body.dark-mode .text-muted {
+        color: rgba(255,255,255,0.6) !important;
+    }
+
+    body.dark-mode .panel-header,
+    body.dark-mode .assets-table th,
+    body.dark-mode .assets-table td,
+    body.dark-mode .alert-item {
+        border-color: rgba(255,255,255,0.05);
+    }
+
+    body.dark-mode .assets-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: var(--dark-text, #f8f9fa);
+        color: var(--dark-text, #f8f9fa);
+    }
+
+    body.dark-mode .assets-table td {
+        background-color: transparent;
+        color: var(--dark-text, #f8f9fa);
+    }
+
+    body.dark-mode .ticker-badge {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+    }
+
+    body.dark-mode .badge-soft-success {
+        background-color: rgba(25, 135, 84, 0.2);
+        color: #75b798;
+    }
+
+    body.dark-mode .badge-soft-danger {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #ea868f;
+    }
+
+    body.dark-mode .empty-cta {
+        background: rgba(255,255,255,0.02);
+        border-color: rgba(255,255,255,0.1);
+    }
 </style>
 
 <div class="dashboard-container">
     <div class="welcome-header animated fade-in-up">
-        <h1>Olá, @User.Identity.Name!</h1>
-        <p>Bem-vindo ao seu painel com base na sua carteira da B3.</p>
+        <div>
+            <h1>Olá, @User.Identity.Name! <i class="bi bi-emoji-smile text-warning"></i></h1>
+            <div class="stat-small mt-1">
+                <i class="bi bi-calendar-check"></i> 
+                Bem-vindo ao seu painel — acompanhe desempenhos, metas e alertas.
+            </div>
+        </div>
+        <div class="welcome-cta">
+            <a href="/Portfolio/AddAsset" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-lg"></i> Adicionar Ativo
+            </a>
+            <a href="/Portfolio" class="btn btn-outline-secondary">
+                <i class="bi bi-wallet2"></i> Ver Carteira
+            </a>
+        </div>
     </div>
 
-    <div class="stats-grid animated fade-in-up" style="animation-delay: 0.1s;">
+    <div class="stats-grid animated fade-in-up" style="animation-delay: 0.05s;">
         <div class="stat-card">
-            <div class="stat-label">Total Investido</div>
+            <div class="stat-card-header">
+                <div class="stat-label">Total Investido</div>
+                <div class="stat-icon icon-blue"><i class="bi bi-safe"></i></div>
+            </div>
             <div class="stat-value">R$ @Model.TotalInvested.ToString("N2")</div>
+            <div class="stat-small">Valor histórico aportado</div>
         </div>
+
         <div class="stat-card">
-            <div class="stat-label">Saldo Atual</div>
+            <div class="stat-card-header">
+                <div class="stat-label">Saldo Atual</div>
+                <div class="stat-icon icon-purple"><i class="bi bi-cash-stack"></i></div>
+            </div>
             <div class="stat-value">R$ @Model.CurrentBalance.ToString("N2")</div>
+            <div class="stat-small">Valor de mercado hoje</div>
         </div>
+
         <div class="stat-card">
-            <div class="stat-label">Lucro / Prejuízo</div>
-            <div class="stat-value">R$ @Model.TotalProfitLoss.ToString("N2")</div>
+            @{
+                var profit = Model.TotalProfitLoss;
+                var isPositive = profit >= 0;
+                var profitIconClass = isPositive ? "icon-green" : "icon-orange";
+                var profitIcon = isPositive ? "bi-graph-up-arrow" : "bi-graph-down-arrow";
+                var badgeClass = isPositive ? "badge-soft-success" : "badge-soft-danger";
+            }
+            <div class="stat-card-header">
+                <div class="stat-label">Lucro / Prejuízo</div>
+                <div class="stat-icon @profitIconClass"><i class="bi @profitIcon"></i></div>
+            </div>
+            <div class="stat-value">R$ @Math.Abs(profit).ToString("N2")</div>
+            <div class="stat-small mt-1">
+                <span class="@badgeClass" style="font-size: 0.75rem; padding: 0.2rem 0.4rem;">
+                    @(isPositive ? "+" : "")@Model.TotalProfitLossPercentage.ToString("N2")%
+                </span>
+                <span class="ms-1">no total</span>
+            </div>
         </div>
+
         <div class="stat-card">
-            <div class="stat-label">Ativos na Carteira</div>
+            <div class="stat-card-header">
+                <div class="stat-label">Diversificação</div>
+                <div class="stat-icon icon-orange"><i class="bi bi-pie-chart"></i></div>
+            </div>
             <div class="stat-value">@Model.AssetsCount</div>
+            <div class="stat-small">Ativos na carteira</div>
         </div>
     </div>
 
-    <div class="dashboard-visual animated fade-in-up" style="animation-delay: 0.2s;">
-        <h3 style="margin-bottom: 1rem; align-self: flex-start; var(--light-text);">Resumo dos Ativos</h3>
-        <div class="chart-placeholder">
+    <div class="dashboard-main">
+        
+        <div class="panel animated fade-in-up" style="animation-delay: 0.1s;">
+            <div class="panel-header">
+                <h5 class="mb-0"><i class="bi bi-table me-2"></i>Top Desempenho</h5>
+                <span class="badge bg-secondary">Top @Model.Assets.Take(5).Count() ativos</span>
+            </div>
+
             @if (Model.Assets.Any())
             {
-                <div class="table-responsive w-100">
-                    <table class="table table-borderless align-middle mb-0">
+                <div class="table-responsive">
+                    <table class="table table-borderless assets-table mb-0">
                         <thead>
-                            <tr style="opacity: 0.7;">
+                            <tr>
                                 <th>Ativo</th>
                                 <th>Preço Atual</th>
-                                <th>Preço Desejado</th>
-                                <th>Direção</th>
-                                <th>Alerta</th>
+                                <th>Qtd</th>
+                                <th>Total Investido</th>
+                                <th>Resultado</th>
+                                <th class="text-end">Tendência</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var asset in Model.Assets.Take(5))
+                            @foreach (var asset in Model.Assets.OrderByDescending(a => a.ProfitLoss).Take(5))
                             {
+                                var aIsPositive = asset.ProfitLoss >= 0;
+                                var aBadgeClass = aIsPositive ? "badge-soft-success" : "badge-soft-danger";
+                                
                                 <tr>
-                                    <td>@asset.Ticker</td>
-                                    <td>R$ @asset.CurrentPrice.ToString("N2")</td>
-                                    <td>R$ @asset.DesiredPrice.ToString("N2")</td>
-                                    <td>@asset.DesiredPriceType</td>
-                                    <td>@(asset.IsTargetNotified ? "Enviado" : "Aguardando")</td>
+                                    <td>
+                                        <div class="ticker-badge mb-1">@asset.Ticker</div>
+                                        <div class="text-muted small"><i class="bi bi-crosshair"></i> Alvo: R$ @asset.DesiredPrice.ToString("N2")</div>
+                                    </td>
+                                    <td><strong>R$ @asset.CurrentPrice.ToString("N2")</strong></td>
+                                    <td>@asset.Quantity</td>
+                                    <td>R$ @asset.TotalInvested.ToString("N2")</td>
+                                    <td>
+                                        <div class="@aBadgeClass mb-1">
+                                            R$ @Math.Abs(asset.ProfitLoss).ToString("N2")
+                                        </div>
+                                        <br />
+                                        <small class="text-muted fw-bold">@asset.ProfitLossPercentage.ToString("N2")%</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="sparkline" title="Gráfico indisponível"></div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+
+                <div class="mt-4 pt-3 border-top text-center">
+                    <a href="/Portfolio" class="btn btn-sm btn-outline-primary px-4 rounded-pill">
+                        Ver carteira completa <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
             }
             else
             {
-                <p>Você ainda não cadastrou ativos. Adicione o primeiro na sua carteira.</p>
+                <div class="empty-cta">
+                    <i class="bi bi-inboxes text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 mb-2">Carteira Vazia</h5>
+                    <p class="text-muted mb-4">Você ainda não possui ativos cadastrados para acompanhamento.</p>
+                    <a href="/Portfolio/AddAsset" class="btn btn-primary shadow-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Adicionar primeiro ativo
+                    </a>
+                </div>
             }
+        </div>
+
+        <div class="panel animated fade-in-up" style="animation-delay: 0.15s;">
+            <div class="panel-header">
+                <h5 class="mb-0"><i class="bi bi-bell-fill text-warning me-2"></i>Alertas</h5>
+            </div>
+            
+            <div class="mb-4">
+                @if (Model.Assets.Any(a => a.IsTargetNotified))
+                {
+                    <div class="alerts-list">
+                        @foreach (var alert in Model.Assets.Where(a => a.IsTargetNotified).Take(5))
+                        {
+                            <div class="alert-item">
+                                <div class="alert-icon">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                </div>
+                                <div>
+                                    <strong class="d-block mb-1">@alert.Ticker atingiu a meta</strong>
+                                    <div class="small text-muted">
+                                        O preço do ativo cruzou o alvo definido de <strong>R$ @alert.DesiredPrice.ToString("N2")</strong>.
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-bell-slash text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="small text-muted mb-0">Nenhum alerta disparado.<br/>Defina metas de preço para ser notificado.</p>
+                    </div>
+                }
+            </div>
+
+            <div class="panel-header mt-4 mb-3 pb-2">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Resumo da Carteira</h6>
+            </div>
+            
+            <div>
+                <div class="d-flex justify-content-between small text-muted mb-2">
+                    <span>Performance (Lucro/Prejuízo)</span>
+                    <span class="fw-bold @(Model.TotalProfitLossPercentage >= 0 ? "text-success" : "text-danger")">
+                        @Model.TotalProfitLossPercentage.ToString("N2")%
+                    </span>
+                </div>
+                
+                <div class="progress shadow-sm" style="height: 14px; border-radius: 10px; background-color: var(--light-card-bg, #e9ecef);">
+                    @{
+                        var perc = Math.Min(100, (decimal)Math.Abs(Model.TotalProfitLossPercentage));
+                        var barClass = Model.TotalProfitLossPercentage >= 0 ? "bg-success" : "bg-danger";
+                    }
+                    <div class="progress-bar @barClass progress-bar-striped progress-bar-animated" role="progressbar" style="width: @perc%"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

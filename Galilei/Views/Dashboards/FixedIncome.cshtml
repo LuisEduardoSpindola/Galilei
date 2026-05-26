@@ -1,0 +1,218 @@
+@model List<Galilei.Models.Dashboards.AssetData>
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    .fi-container {
+        padding: 1rem 0;
+    }
+    
+    .fi-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .widget-panel {
+        background: var(--light-card-bg);
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: var(--border-radius-lg, 12px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    body.dark-mode .widget-panel {
+        background: var(--dark-card-bg, #1e1e1e);
+        border-color: rgba(255,255,255,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Fixed income specific cards */
+    .rate-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .rate-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(25, 135, 84, 0.05), rgba(25, 135, 84, 0.01));
+        border: 1px solid rgba(25, 135, 84, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    body.dark-mode .rate-card {
+        background: linear-gradient(145deg, rgba(25, 135, 84, 0.1), transparent);
+        border-color: rgba(25, 135, 84, 0.2);
+    }
+
+    .rate-card.ipca {
+        background: linear-gradient(145deg, rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.01));
+        border-color: rgba(13, 110, 253, 0.1);
+    }
+    body.dark-mode .rate-card.ipca { background: linear-gradient(145deg, rgba(13, 110, 253, 0.1), transparent); border-color: rgba(13, 110, 253, 0.2); }
+
+    .rate-card.cdi {
+        background: linear-gradient(145deg, rgba(111, 66, 193, 0.05), rgba(111, 66, 193, 0.01));
+        border-color: rgba(111, 66, 193, 0.1);
+    }
+    body.dark-mode .rate-card.cdi { background: linear-gradient(145deg, rgba(111, 66, 193, 0.1), transparent); border-color: rgba(111, 66, 193, 0.2); }
+
+    .rate-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--light-text);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+    body.dark-mode .rate-title { color: var(--dark-text); }
+
+    .rate-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--light-text);
+    }
+    body.dark-mode .rate-value { color: var(--dark-text); }
+
+    .fi-table th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--light-text);
+        opacity: 0.6;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(0,0,0,0.05);
+        padding: 1rem 0.5rem;
+    }
+    body.dark-mode .fi-table th { color: var(--dark-text); border-color: rgba(255,255,255,0.05); }
+
+    .fi-table td {
+        vertical-align: middle;
+        padding: 1.25rem 0.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+    body.dark-mode .fi-table td { border-color: rgba(255,255,255,0.02); }
+
+    .tag-risk {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 700;
+    }
+
+    .risk-low {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+    }
+    .risk-med {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    .text-primary-color {
+        color: var(--primary-color);
+    }
+</style>
+
+<div class="fi-container">
+    <div class="fi-header animated fade-in-up">
+        <h2 class="mb-0 fw-bold"><i class="bi bi-shield-check text-primary-color"></i> @ViewData["Title"]</h2>
+        <div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Atualizar Dados</button>
+        </div>
+    </div>
+
+    <!-- Indicadores Econômicos (Simulados p/ Dashboard) -->
+    <div class="rate-card-grid animated fade-in-up" style="animation-delay: 0.1s;">
+        <div class="rate-card selic">
+            <span class="rate-title">Selic Meta</span>
+            <span class="rate-value">11,25% <small style="font-size: 1rem; opacity:0.5;">a.a.</small></span>
+        </div>
+        <div class="rate-card cdi">
+            <span class="rate-title">CDI</span>
+            <span class="rate-value">11,15% <small style="font-size: 1rem; opacity:0.5;">a.a.</small></span>
+        </div>
+        <div class="rate-card ipca">
+            <span class="rate-title">IPCA Acumulado 12M</span>
+            <span class="rate-value">4,50% <small style="font-size: 1rem; opacity:0.5;">a.a.</small></span>
+        </div>
+    </div>
+
+    <div class="widget-panel animated fade-in-up" style="animation-delay: 0.2s;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-bank"></i> Oportunidades Em Renda Fixa</h5>
+            <div>
+                <select class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                    <option>Todos os tipos</option>
+                    <option>Tesouro Direto</option>
+                    <option>CDBs</option>
+                    <option>LCI/LCA</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-borderless fi-table">
+                <thead>
+                    <tr>
+                        <th>Emissor / Produto</th>
+                        <th>Taxa / Rentabilidade</th>
+                        <th>Vencimento</th>
+                        <th>Aplicação Mínima</th>
+                        <th>Risco</th>
+                        <th class="text-end">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model ?? new List<Galilei.Models.Dashboards.AssetData>())
+                    {
+                        var isPós = item.Symbol.Contains("CDI") || item.Name.Contains("CDI");
+                        var isHibrido = item.Name.Contains("IPCA");
+                        var tipo = isPós ? "Pós-fixado" : (isHibrido ? "Híbrido" : "Pré-fixado");
+                        var riskClass = item.Symbol.Contains("TD") || item.Symbol.Contains("IPCA") ? "risk-low" : "risk-med";
+                        var riskText = riskClass == "risk-low" ? "Baixo / Soberano" : "Médio / Bancário";
+
+                        <tr>
+                            <td>
+                                <div class="fw-bold fs-6">@item.Name</div>
+                                <span class="badge bg-secondary opacity-75 mt-1">@item.Symbol</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold" style="color: var(--primary-color);">
+                                    @if(isPós) {
+                                        @: 110% do CDI
+                                    } else if (isHibrido) {
+                                        @: IPCA + 6,2%
+                                    } else {
+                                        @: 12.5% a.a.
+                                    }
+                                </div>
+                                <small class="text-muted">@tipo</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold">2027</div>
+                                <small class="text-muted">Liquidez no vencto.</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold">R$ @item.Price.ToString("N2")</div>
+                            </td>
+                            <td>
+                                <span class="tag-risk @riskClass">@riskText</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="/Portfolio/AddAsset?ticker=@item.Symbol&price=@item.Price" class="btn btn-sm btn-outline-primary shadow-sm rounded-pill px-3">
+                                    Adicionar
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

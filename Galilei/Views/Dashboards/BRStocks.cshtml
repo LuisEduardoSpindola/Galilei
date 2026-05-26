@@ -1,0 +1,311 @@
+@model List<Galilei.Models.Dashboards.AssetData>
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    .broker-container {
+        padding: 1rem 0;
+    }
+    
+    .broker-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .widget-panel {
+        background: var(--light-card-bg);
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: var(--border-radius-lg, 12px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    body.dark-mode .widget-panel {
+        background: var(--dark-card-bg, #1e1e1e);
+        border-color: rgba(255,255,255,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .ticker-tape {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        padding-bottom: 0.5rem;
+        scrollbar-width: thin;
+    }
+
+    .ticker-tape::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .ticker-tape::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+    body.dark-mode .ticker-tape::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.1);
+    }
+
+    .ticker-item {
+        flex: 0 0 auto;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background: rgba(0,0,0,0.02);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        border: 1px solid transparent;
+    }
+
+    .ticker-item:hover {
+        background: rgba(0,0,0,0.05);
+        border-color: rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .ticker-item {
+        background: rgba(255,255,255,0.02);
+    }
+    body.dark-mode .ticker-item:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.1);
+    }
+
+    .ticker-symbol {
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .ticker-price {
+        font-weight: 600;
+    }
+
+    .ticker-change {
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .text-positive { color: #198754; }
+    .text-negative { color: #dc3545; }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 1.5rem;
+    }
+
+    @@media (max-width: 992px) {
+        .grid-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .table-broker th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--light-text);
+        opacity: 0.6;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark-mode .table-broker th {
+        color: var(--dark-text);
+        border-color: rgba(255,255,255,0.05);
+    }
+
+    .table-broker td {
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+        color: var(--light-text);
+    }
+
+    body.dark-mode .table-broker td {
+        border-color: rgba(255,255,255,0.02);
+        color: var(--dark-text, #f8f9fa);
+    }
+
+    .table-broker tr:hover td {
+        background-color: rgba(0,0,0,0.01);
+    }
+
+    body.dark-mode .table-broker tr:hover td {
+        background-color: rgba(255,255,255,0.02);
+    }
+
+    .buy-btn {
+        background: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        border: none;
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+    }
+    
+    .buy-btn:hover {
+        background: #198754;
+        color: white;
+    }
+
+    .tv-widget-container {
+        height: 500px;
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+</style>
+
+<div class="broker-container">
+    <div class="broker-header animated fade-in-up">
+        <h2 class="mb-0 fw-bold"><i class="bi bi-display"></i> @ViewData["Title"]</h2>
+        <div>
+            <button class="btn btn-primary btn-sm"><i class="bi bi-filter"></i> Filtros</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+        </div>
+    </div>
+
+    <!-- Ticker Tape -->
+    <div class="widget-panel animated fade-in-up" style="animation-delay: 0.1s;">
+        <div class="ticker-tape">
+            @foreach(var asset in Model ?? new List<Galilei.Models.Dashboards.AssetData>())
+            {
+                var isPositive = asset.ChangePercentage24h >= 0;
+                <div class="ticker-item" onclick="changeChart('@asset.Symbol')">
+                    <span class="ticker-symbol">@asset.Symbol</span>
+                    <span class="ticker-price">R$ @asset.Price.ToString("N2")</span>
+                    <span class="ticker-change @(isPositive ? "text-positive" : "text-negative")">
+                        @(isPositive ? "+" : "")@asset.ChangePercentage24h.ToString("N2")%
+                    </span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="grid-container animated fade-in-up" style="animation-delay: 0.2s;">
+        
+        <!-- Chart Panel -->
+        <div class="widget-panel">
+            <h5 class="mb-3 fw-bold"><i class="bi bi-graph-up"></i> Análise Técnica <span id="current-chart-label" class="text-primary">PETR4</span></h5>
+            <div class="tv-widget-container" id="tv-chart-container">
+                <!-- TradingView Widget BEGIN -->
+                <div class="tradingview-widget-container">
+                    <div id="tradingview_12345" style="height:100%; width:100%;"></div>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+        </div>
+
+        <!-- Order Book / Assets List -->
+        <div class="widget-panel">
+            <h5 class="mb-3 fw-bold"><i class="bi bi-list-columns-reverse"></i> Cotações (B3)</h5>
+            <div class="table-responsive" style="max-height: 440px; overflow-y: auto;">
+                <table class="table table-borderless table-broker w-100 m-0">
+                    <thead style="position: sticky; top: 0; background: var(--light-card-bg); z-index: 1;">
+                        <tr>
+                            <th>Ativo</th>
+                            <th>Último (R$)</th>
+                            <th>Var %</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var asset in Model ?? new List<Galilei.Models.Dashboards.AssetData>())
+                        {
+                            var isPositive = asset.ChangePercentage24h >= 0;
+                            <tr>
+                                <td>
+                                    <div class="fw-bold" style="cursor: pointer; color: var(--primary-color);" onclick="changeChart('@asset.Symbol')">@asset.Symbol</div>
+                                    <small style="opacity: 0.6; font-size: 0.75rem;">@asset.Name</small>
+                                </td>
+                                <td class="fw-bold">@asset.Price.ToString("N2")</td>
+                                <td class="fw-bold @(isPositive ? "text-positive" : "text-negative")">
+                                    @(isPositive ? "+" : "")@asset.ChangePercentage24h.ToString("N2")%
+                                </td>
+                                <td>
+                                    <a href="/Portfolio/AddAsset?ticker=@asset.Symbol&price=@asset.Price" class="buy-btn text-decoration-none">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        let currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        let tvWidget = null;
+
+        function createChart(symbol) {
+            document.getElementById('current-chart-label').innerText = symbol;
+            
+            // Adjust symbol for TradingView format if needed (e.g. BM&F Bovespa)
+            let tvSymbol = "BMFBOVESPA:" + symbol;
+
+            tvWidget = new TradingView.widget({
+              "autosize": true,
+              "symbol": tvSymbol,
+              "interval": "D",
+              "timezone": "America/Sao_Paulo",
+              "theme": currentTheme,
+              "style": "1",
+              "locale": "br",
+              "enable_publishing": false,
+              "backgroundColor": currentTheme === 'dark' ? "#1e1e1e" : "#ffffff",
+              "gridColor": currentTheme === 'dark' ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+              "hide_top_toolbar": false,
+              "hide_legend": false,
+              "save_image": false,
+              "container_id": "tradingview_12345"
+            });
+        }
+
+        function changeChart(symbol) {
+            createChart(symbol);
+        }
+
+        // Initialize with default
+        createChart("@(Model?.FirstOrDefault()?.Symbol ?? "PETR4")");
+
+        // Listen for theme changes from layout
+        const obs = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if(mutation.attributeName === 'class'){
+                    let newTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    if(newTheme !== currentTheme){
+                        currentTheme = newTheme;
+                        let curSymbol = document.getElementById('current-chart-label').innerText;
+                        createChart(curSymbol); // reload chart with new theme
+                    }
+                }
+            });
+        });
+        obs.observe(document.body, { attributes: true });
+        
+        // Dark mode adaptation for fixed table header
+        function adaptTableHeaderTheme() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const thead = document.querySelector('.table-broker thead');
+            if(thead) {
+                thead.style.background = isDark ? 'var(--dark-card-bg, #1e1e1e)' : 'var(--light-card-bg, #ffffff)';
+            }
+        }
+        
+        const styleObs = new MutationObserver(adaptTableHeaderTheme);
+        styleObs.observe(document.body, { attributes: true });
+        adaptTableHeaderTheme();
+    </script>
+}

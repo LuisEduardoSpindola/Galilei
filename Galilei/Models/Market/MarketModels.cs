@@ -10,4 +10,13 @@ namespace Galilei.Models.Market
         public DateTime PublishedAt { get; set; }
     }
 
+    public class PlatformRecommendation
+    {
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public double Rating { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public string Link { get; set; }
+    }
 }
