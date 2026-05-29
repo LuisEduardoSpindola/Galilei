@@ -150,7 +150,7 @@ namespace Galilei.Services
 
         public async Task<List<AssetData>> GetBRStocksDataAsync()
         {
-            var tickers = new List<string> { "PETR4", "VALE3", "ITUB4", "B3SA3" };
+            var tickers = await GetB3TickersAsync();
             return await GetMarketDataForTickersAsync(tickers);
         }
 

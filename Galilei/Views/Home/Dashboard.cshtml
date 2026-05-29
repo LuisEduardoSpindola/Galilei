@@ -392,7 +392,6 @@
                                 <th>Qtd</th>
                                 <th>Total Investido</th>
                                 <th>Resultado</th>
-                                <th class="text-end">Tendência</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -400,7 +399,7 @@
                             {
                                 var aIsPositive = asset.ProfitLoss >= 0;
                                 var aBadgeClass = aIsPositive ? "badge-soft-success" : "badge-soft-danger";
-                                
+
                                 <tr>
                                     <td>
                                         <div class="ticker-badge mb-1">@asset.Ticker</div>
@@ -415,9 +414,6 @@
                                         </div>
                                         <br />
                                         <small class="text-muted fw-bold">@asset.ProfitLossPercentage.ToString("N2")%</small>
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="sparkline" title="Gráfico indisponível"></div>
                                     </td>
                                 </tr>
                             }
