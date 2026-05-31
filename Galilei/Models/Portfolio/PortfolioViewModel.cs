@@ -19,7 +19,7 @@ namespace Galilei.Models.Portfolio
         public int Quantity { get; set; }
         public decimal AveragePrice { get; set; }
         public decimal TotalInvested => Quantity * AveragePrice;
-        public decimal DesiredPrice { get; set; }
+        public decimal? DesiredPrice { get; set; }
         public DesiredPriceType DesiredPriceType { get; set; }
         public bool IsTargetNotified { get; set; }
         

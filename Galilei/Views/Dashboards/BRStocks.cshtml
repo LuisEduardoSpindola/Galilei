@@ -153,7 +153,7 @@
                                 <a href="https://www.google.com/search?q=cotação+@asset.Symbol" target="_blank" class="action-btn">
                                     <i class="bi bi-box-arrow-up-right"></i> Detalhes
                                 </a>
-                                <a href="/Portfolio/AddAsset?ticker=@asset.Symbol&price=@asset.Price" class="btn btn-sm btn-outline-success">
+                                <a href="/Portfolio/AddAsset?ticker=@asset.Symbol&price=@asset.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" class="btn btn-sm btn-outline-success">
                                     <i class="bi bi-plus-lg"></i> Comprar
                                 </a>
                             </td>

@@ -109,7 +109,7 @@
 
                 <div class="col-md-6 form-group">
                     <label asp-for="AveragePrice" class="form-label">Preço Médio (R$)</label>
-                    <input asp-for="AveragePrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                    <input asp-for="AveragePrice" type="number" class="form-control" min="0.01" step="0.01" value="@(Model?.AveragePrice > 0 ? Model.AveragePrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) : "")" required />
                     <span asp-validation-for="AveragePrice" class="text-danger small mt-1 d-block"></span>
                 </div>
             </div>
@@ -117,7 +117,8 @@
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label asp-for="DesiredPriceType" class="form-label">Tipo do Preço Desejado</label>
-                    <select asp-for="DesiredPriceType" class="form-control" required>
+                    <select asp-for="DesiredPriceType" class="form-control">
+                        <option value="Nenhum">Nenhum</option>
                         <option value="Compra">Compra</option>
                         <option value="Venda">Venda</option>
                     </select>
@@ -125,8 +126,8 @@
                 </div>
 
                 <div class="col-md-6 form-group">
-                    <label asp-for="DesiredPrice" class="form-label">Preço Desejado (R$)</label>
-                    <input asp-for="DesiredPrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                    <label asp-for="DesiredPrice" class="form-label">Preço Desejado</label>
+                    <input asp-for="DesiredPrice" type="number" class="form-control" min="0" step="0.01" value="@(Model != null && Model.DesiredPrice.HasValue && Model.DesiredPrice.Value > 0 ? Model.DesiredPrice.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) : "")" placeholder="0.00" />
                     <span asp-validation-for="DesiredPrice" class="text-danger small mt-1 d-block"></span>
                 </div>
             </div>

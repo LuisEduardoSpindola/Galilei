@@ -35,7 +35,7 @@ namespace Galilei.Services
 
             foreach (var asset in assets)
             {
-                if (asset.IsTargetNotified || asset.DesiredPrice <= 0)
+                if (asset.IsTargetNotified || !asset.DesiredPrice.HasValue || asset.DesiredPrice.Value <= 0 || asset.DesiredPriceType == DesiredPriceType.Nenhum)
                 {
                     continue;
                 }
@@ -47,8 +47,8 @@ namespace Galilei.Services
                 }
 
                 var reached = asset.DesiredPriceType == DesiredPriceType.Compra
-                    ? marketInfo.Price <= asset.DesiredPrice
-                    : marketInfo.Price >= asset.DesiredPrice;
+                    ? marketInfo.Price <= asset.DesiredPrice.Value
+                    : marketInfo.Price >= asset.DesiredPrice.Value;
 
                 if (!reached)
                 {
@@ -57,7 +57,7 @@ namespace Galilei.Services
 
                 var direction = asset.DesiredPriceType == DesiredPriceType.Compra ? "compra" : "venda";
                 var subject = $"Alerta de preço para {asset.Ticker}";
-                var body = $"Olá {user.FullName},\n\nO ativo {asset.Ticker} atingiu o preço desejado para {direction}.\nPreço desejado: R$ {asset.DesiredPrice:N2}\nPreço atual: R$ {marketInfo.Price:N2}\n\nAcesse sua carteira no Galilei para mais detalhes.";
+                var body = $"Olá {user.FullName},\n\nO ativo {asset.Ticker} atingiu o preço desejado para {direction}.\nPreço desejado: R$ {asset.DesiredPrice.Value:N2}\nPreço atual: R$ {marketInfo.Price:N2}\n\nAcesse sua carteira no Galilei para mais detalhes.";
 
                 var sent = await _emailService.SendAsync(user.Email, subject, body);
                 if (sent)

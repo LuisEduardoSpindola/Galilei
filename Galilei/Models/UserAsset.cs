@@ -28,18 +28,18 @@ namespace Galilei.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal AveragePrice { get; set; }
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "O preço desejado deve ser maior que zero.")]
+        [Range(0, double.MaxValue, ErrorMessage = "O preço desejado não pode ser negativo.")]
         [Column(TypeName = "decimal(18,4)")]
-        public decimal DesiredPrice { get; set; }
+        public decimal? DesiredPrice { get; set; }
 
-        [Required]
-        public DesiredPriceType DesiredPriceType { get; set; } = DesiredPriceType.Compra;
+        public DesiredPriceType DesiredPriceType { get; set; } = DesiredPriceType.Nenhum;
 
         public bool IsTargetNotified { get; set; }
     }
 
     public enum DesiredPriceType
     {
+        Nenhum = 0,
         Compra = 1,
         Venda = 2
     }

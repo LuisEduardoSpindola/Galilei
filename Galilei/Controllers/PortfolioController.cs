@@ -67,11 +67,18 @@ namespace Galilei.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddAsset()
+        public async Task<IActionResult> AddAsset(string ticker = null, string price = null)
         {
             var tickers = await _marketService.GetB3TickersAsync();
             ViewBag.Tickers = tickers;
-            return View();
+            var model = new UserAsset();
+            if (!string.IsNullOrEmpty(ticker)) model.Ticker = ticker;
+            if (!string.IsNullOrEmpty(price) && decimal.TryParse(price, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var p)) 
+            {
+                model.AveragePrice = p;
+            }
+
+            return View(model);
         }
 
         [HttpPost]
@@ -94,9 +101,9 @@ namespace Galilei.Controllers
             {
                 ModelState.AddModelError("AveragePrice", "O preço médio deve ser maior que zero.");
             }
-            if (model.DesiredPrice <= 0)
+            if (model.DesiredPrice < 0)
             {
-                ModelState.AddModelError("DesiredPrice", "O preço desejado deve ser maior que zero.");
+                ModelState.AddModelError("DesiredPrice", "O preço desejado não pode ser negativo.");
             }
 
             if (!ModelState.IsValid)
@@ -105,6 +112,7 @@ namespace Galilei.Controllers
             }
 
             model.Ticker = model.Ticker.ToUpper();
+            model.DesiredPrice ??= 0m; // Avoid DB exception for NULL
 
             // Verify if already exists to calculate new average price
             var existingAsset = await _context.UserAssets

@@ -403,7 +403,7 @@
                                 <tr>
                                     <td>
                                         <div class="ticker-badge mb-1">@asset.Ticker</div>
-                                        <div class="text-muted small"><i class="bi bi-crosshair"></i> Alvo: R$ @asset.DesiredPrice.ToString("N2")</div>
+                                        <div class="text-muted small"><i class="bi bi-crosshair"></i> Alvo: R$ @(asset.DesiredPrice?.ToString("N2") ?? "-")</div>
                                     </td>
                                     <td><strong>R$ @asset.CurrentPrice.ToString("N2")</strong></td>
                                     <td>@asset.Quantity</td>
@@ -458,7 +458,7 @@
                                 <div>
                                     <strong class="d-block mb-1">@alert.Ticker atingiu a meta</strong>
                                     <div class="small text-muted">
-                                        O preço do ativo cruzou o alvo definido de <strong>R$ @alert.DesiredPrice.ToString("N2")</strong>.
+                                        O preço do ativo cruzou o alvo definido de <strong>R$ @(alert.DesiredPrice?.ToString("N2") ?? "-")</strong>.
                                     </div>
                                 </div>
                             </div>

@@ -170,7 +170,7 @@
                             <td><span class="asset-badge">@asset.Ticker</span></td>
                             <td>@asset.Quantity</td>
                             <td>@asset.AveragePrice.ToString("N2")</td>
-                            <td>@asset.DesiredPrice.ToString("N2")</td>
+                            <td>@(asset.DesiredPrice?.ToString("N2") ?? "-")</td>
                             <td>@asset.DesiredPriceType</td>
                             <td style="font-weight: 600;">@asset.CurrentPrice.ToString("N2")</td>
                             <td class="@(asset.ChangePercentage24h >= 0 ? "text-positive" : "text-negative")">
