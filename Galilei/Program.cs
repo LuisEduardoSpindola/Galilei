@@ -14,7 +14,16 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPriceAlertService, PriceAlertService>();
 
 builder.Services.AddDbContext<GalileiContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GalileiContext")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("GalileiContext"),
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            // Habilita a resiliência contra falhas transitórias
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5, // Tenta até 5 vezes antes de falhar de vez
+                maxRetryDelay: TimeSpan.FromSeconds(30), // Espera até 30 segundos entre as tentativas
+                errorNumbersToAdd: null); // Não adiciona nenhum código de erro extra além dos padrões do Azure
+        }));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
