@@ -220,6 +220,44 @@
         margin-top: 10px;
     }
 
+    .form-btn[disabled] {
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+
+    .submit-label,
+    .submit-loading {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .submit-loading {
+        display: none;
+    }
+
+    .form-btn.is-loading .submit-label {
+        display: none;
+    }
+
+    .form-btn.is-loading .submit-loading {
+        display: inline-flex;
+    }
+
+    .loading-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
     .bar-chart {
         width: 100%;
         max-width: 400px;
@@ -404,7 +442,13 @@
                     <div class="invalid-feedback" id="confirmPassword-feedback">As senhas não coincidem.</div>
                 </div>
 
-                <button type="submit" class="form-btn">Criar Conta</button>
+                <button type="submit" class="form-btn" id="register-submit-btn" autocomplete="off">
+                    <span class="submit-label">Criar Conta</span>
+                    <span class="submit-loading" aria-hidden="true">
+                        <span class="loading-spinner"></span>
+                        Cadastrando...
+                    </span>
+                </button>
             </form>
             <div class="form-footer mt-4 text-center">
                 <p style="margin: 0; padding: 0;">Já tem uma conta? <a asp-action="Login" style="font-weight: 700;">Faça Login</a></p>
@@ -452,12 +496,14 @@
         });
 
         const form = document.getElementById('register-form');
+        const submitBtn = document.getElementById('register-submit-btn');
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirmPassword');
         const confirmPasswordFeedback = document.getElementById('confirmPassword-feedback');
+        let isSubmitting = false;
 
         form.addEventListener('submit', function (event) {
-            let passwordsMatch = password.value === confirmPassword.value;
+            const passwordsMatch = password.value === confirmPassword.value;
 
             if (!passwordsMatch) {
                 confirmPassword.setCustomValidity('Invalid');
@@ -470,6 +516,20 @@
             if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('is-loading');
+                submitBtn.setAttribute('aria-busy', 'false');
+            } else {
+                if (isSubmitting) {
+                    event.preventDefault();
+                    return;
+                }
+
+                isSubmitting = true;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('is-loading');
+                submitBtn.setAttribute('aria-busy', 'true');
             }
 
             form.classList.add('was-validated');

@@ -112,9 +112,8 @@ namespace Galilei.Controllers
             }
 
             model.Ticker = model.Ticker.ToUpper();
-            model.DesiredPrice ??= 0m; // Avoid DB exception for NULL
+            model.DesiredPrice ??= 0m;
 
-            // Verify if already exists to calculate new average price
             var existingAsset = await _context.UserAssets
                 .FirstOrDefaultAsync(a => a.UserId == model.UserId && a.Ticker == model.Ticker);
 

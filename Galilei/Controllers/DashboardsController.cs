@@ -17,7 +17,7 @@ namespace Galilei.Controllers
         public async Task<IActionResult> BRStocks()
         {
             var data = await _marketDataService.GetBRStocksDataAsync();
-            ViewData["Title"] = "Home Broker - Ações B3";
+            ViewData["Title"] = "Principais Ações B3";
             return View(data);
         }
 
