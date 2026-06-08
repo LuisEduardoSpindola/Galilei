@@ -46,6 +46,11 @@
 }
 
 
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
 body {
     background-color: var(--light-bg);
     color: var(--light-text);
