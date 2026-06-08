@@ -20,6 +20,13 @@
         background-color: var(--dark-bg);
     }
 
+    /* Remove o ícone de sucesso (check) apenas dos inputs dentro do password-wrapper */
+    .password-wrapper .form-control.is-valid, 
+    .was-validated .password-wrapper .form-control:valid {
+        background-image: none !important;
+        padding-right: 45px; /* Mantém espaço apenas para o olho */
+    }
+
     .auth-visual {
         flex: 1.2;
         background: linear-gradient(135deg, #FF8C00 0%, #FF5F00 100%);
